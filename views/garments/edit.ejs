@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create Garment</title>
+    <title>Edit Garment</title>
     <style>
       form {
         display: flex;
@@ -23,16 +23,26 @@
     </style>
   </head>
   <body>
-    <h1>Add Garment</h1>
+    <h1>Edit Garment</h1>
     <a href="/garments/">Kembali</a>
-    <form action="/garments" method="post">
+    <form action="/garments/<%= garment._id %>?_method=PUT" method="post">
       <label for="name">Name Garment</label>
-      <input type="text" name="name" id="name" />
+      <input type="text" name="name" id="name" value="<%= garment.name %>" />
       <label for="location">Location</label>
-      <input type="text" name="location" id="location" />
+      <input
+        type="text"
+        name="location"
+        id="location"
+        value="<%= garment.location %>"
+      />
       <label for="contact">Contact</label>
-      <input type="text" name="contact" id="contact" />
-      <button type="submit">Add Garment</button>
+      <input
+        type="text"
+        name="contact"
+        id="contact"
+        value="<%= garment.contact %>"
+      />
+      <button type="submit">Edit Garment</button>
     </form>
   </body>
 </html>

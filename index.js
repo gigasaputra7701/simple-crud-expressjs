@@ -31,6 +31,7 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
+//Garment
 app.get(
   "/garments",
   wrapAsync(async (req, res) => {
@@ -53,6 +54,62 @@ app.post(
   })
 );
 
+app.get(
+  "/garments/:id",
+  wrapAsync(async (req, res, next) => {
+    const { id } = req.params;
+    const garment = await Garment.findById(id).populate("products");
+    res.render("garments/show", { garment, rupiah });
+  })
+);
+
+app.get("/garments/:garment_id/products/create", (req, res) => {
+  const { garment_id } = req.params;
+  res.render("products/create", { garment_id });
+});
+
+app.post(
+  "/garments/:garment_id/products",
+  wrapAsync(async (req, res) => {
+    const { garment_id } = req.params;
+    const garment = await Garment.findById(garment_id);
+    const product = new Product(req.body);
+    garment.products.push(product);
+    product.garment = garment;
+    await garment.save();
+    await product.save();
+    res.redirect(`/garments/${garment_id}`);
+  })
+);
+
+app.get(
+  "/garments/:id/edit",
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const garment = await Garment.findById(id);
+    res.render("garments/edit", { garment });
+  })
+);
+
+app.put(
+  "/garments/:id",
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    await Garment.findByIdAndUpdate(id, req.body, { runValidators: true });
+    res.redirect(`/garments/${id}`);
+  })
+);
+
+app.delete(
+  "/garments/:garment_id",
+  wrapAsync(async (req, res) => {
+    const { garment_id } = req.params;
+    await Garment.findOneAndDelete({ _id: garment_id });
+    res.redirect("/garments/");
+  })
+);
+
+//Products
 app.get(
   "/products",
   wrapAsync(async (req, res) => {
@@ -84,7 +141,7 @@ app.get(
   "/products/:id",
   wrapAsync(async (req, res, next) => {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate("garment");
     res.render("products/show", { product, rupiah });
   })
 );
