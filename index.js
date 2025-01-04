@@ -9,6 +9,7 @@ const methodOverride = require("method-override");
 const app = express();
 
 const Product = require("./models/product");
+const Garment = require("./models/garment");
 
 // Connect to MongoDB
 mongoose
@@ -29,6 +30,28 @@ app.use(methodOverride("_method"));
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
+
+app.get(
+  "/garments",
+  wrapAsync(async (req, res) => {
+    const garments = await Garment.find({});
+    res.render("garments/index", { garments });
+  })
+);
+
+app.get("/garments/create", (req, res) => {
+  res.render("garments/create");
+});
+
+app.post(
+  "/garments",
+  wrapAsync(async (req, res) => {
+    // No Validate
+    const garment = new Garment(req.body);
+    await garment.save();
+    res.redirect(`/garments`);
+  })
+);
 
 app.get(
   "/products",
@@ -117,4 +140,3 @@ app.use((err, req, res, next) => {
 app.listen(3000, () => {
   console.log(`Shop App listening on http://127.0.0.1:3000`);
 });
-
