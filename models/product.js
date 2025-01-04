@@ -21,6 +21,10 @@ const productSchema = new mongoose.Schema({
     type: String,
     enum: ["Baju", "Celana", "Aksesoris", "Jaket"],
   },
+  garment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Garment",
+  },
 });
 
 const Product = mongoose.model("Product", productSchema);
