@@ -32,11 +32,14 @@ app.use(methodOverride("_method"));
 app.use(
   session({
     secret: "Secret_key",
-    resave: false,
-    saveUnintialized: false,
   })
 );
 app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.flash_messages = req.flash("messages");
+  next();
+});
 
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -47,7 +50,7 @@ app.get(
   "/garments",
   wrapAsync(async (req, res) => {
     const garments = await Garment.find({});
-    res.render("garments/index", { garments, message: req.flash("success") });
+    res.render("garments/index", { garments });
   })
 );
 
@@ -61,7 +64,7 @@ app.post(
     // No Validate
     const garment = new Garment(req.body);
     await garment.save();
-    req.flash("success", "Berhasil menambahkan data pabrik!");
+    req.flash("messages", "Berhasil menambahkan data pabrik!");
     res.redirect(`/garments`);
   })
 );
